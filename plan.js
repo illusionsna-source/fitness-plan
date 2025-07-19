@@ -1125,37 +1125,43 @@ const planData = {
   },
 };
 
-// DOM elements
-const weekSelect = document.getElementById("weekSelect");
-const planOutput = document.getElementById("planOutput");
+document.getElementById("weekSelect").addEventListener("change", function () {
+  const selectedWeek = this.value;
+  const plan = planData[selectedWeek];
+  const output = document.getElementById("planOutput");
+  const cta = document.getElementById("ctaFinal"); // ⬅️ Make sure plan.html me ye element ho
 
-// Render selected week's plan
-function renderWeek(weekNum) {
-  const week = planData[weekNum];
-  if (!week) {
-    planOutput.innerHTML = `<p>No data found for Week ${weekNum}</p>`;
+  if (!plan) {
+    output.innerHTML = "<p>No plan found for this week.</p>";
+    cta.style.display = "none";
     return;
   }
 
-  let html = `<div class="week-title">${week.title}</div>`;
+  // Week title
+  let html = `<div id="week-title">${plan.title}</div>`;
 
-  week.days.forEach(day => {
-    html += `<div class="day-block"><h3>${day.day}</h3><ul>`;
-    day.entries.forEach(entry => {
-      html += `<li>${entry}</li>`;
-    });
-    html += `</ul></div>`;
+  // Daily breakdown
+  plan.days.forEach(day => {
+    html += `
+      <div class="day">
+        <h3>${day.day}</h3>
+        <ul>
+          ${day.entries.map(entry => `<li>${entry}</li>`).join("")}
+        </ul>
+      </div>
+    `;
   });
 
-  planOutput.innerHTML = html;
-}
+  output.innerHTML = html;
 
-// Initial render (Week 1)
-renderWeek("1");
-
-// Change handler
-weekSelect.addEventListener("change", () => {
-  const selectedWeek = weekSelect.value;
-  renderWeek(selectedWeek);
+  // CTA Button for Week 18 only
+  if (selectedWeek === "18") {
+    cta.style.display = "block";
+  } else {
+    cta.style.display = "none";
+  }
 });
 
+function goToCongrats() {
+  location.href = 'congrats.html';
+}
